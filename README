@@ -1,0 +1,24 @@
+Sudoku solver 
+
+As of 3/2/13, non-speculative. This is a BIG limiting factor!
+
+Usage:
+  Accepts sudoku spec on stdin. Expects 9 lines of 9 digits, where `0' indicates an
+  unknown entry and 1..9 indicates a known value. Prints completed sudoku on success,
+  error message on failure.
+  
+  e.g. 
+    $ ./sudoku < examples/example.ad
+    523816749
+    784593126
+    691472835
+    239145687
+    457268913
+    168937254
+    342789561
+    915624378
+    876351492
+
+Test
+  Shipped with 49 unsolved sudokus. test.sh tries to executes each example in the
+  examples directory in turn.
