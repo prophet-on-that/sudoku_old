@@ -153,7 +153,7 @@ possibilities (const Row &row)
     cit++
   )
   {
-    // add if value unassigned
+    // Add if value unassigned
     int value = 1 + cit - possibilities.begin ();
     if (cit->size () > 1)
       ret.push_back (pair<int, vector<int> > (value, *cit));
@@ -204,15 +204,15 @@ find_necessary_assignments (const Grid &grid)
         necessary.push_back (pair<Point, int> (Point (position, j), value));
       }
   }
-  // Subgrid // TODO clean
-  for (int i = 0; i < 3; i++)
-    for (int j = 0; j < 3; j++)
+  // Subgrid
+  for (int i = 0; i < SIZE / SUBGRID_SIZE; i++)
+    for (int j = 0; j < SIZE / SUBGRID_SIZE; j++)
     {
       // Aggregate subgrid as temp row
       Row row;
-      for (int i_offset = 0; i < 3; i++)
-        for (int j_offset = 0; j < 3; j++)
-          row.push_back (grid[3*i + i_offset][3*j + i_offset]);
+      for (int i_offset = 0; i < SUBGRID_SIZE; i++)
+        for (int j_offset = 0; j < SUBGRID_SIZE; j++)
+          row.push_back (grid[SUBGRID_SIZE * i + i_offset][SUBGRID_SIZE * j + i_offset]);
       vector<pair <int, vector<int> > > poss = possibilities (row);
       for (
         vector<pair <int, vector<int> > >::const_iterator cit = poss.begin ();
@@ -224,8 +224,8 @@ find_necessary_assignments (const Grid &grid)
           // modify and add to update list
           int value = cit->first;
           int position = cit->second.front ();
-          Point offset = Point (position / 3, position % 3);
-          Point coord = Point (3 * i + offset.first, 3 * j + offset.second);
+          Point offset = Point (position / SUBGRID_SIZE, position % SUBGRID_SIZE);
+          Point coord = Point (SUBGRID_SIZE * i + offset.first, SUBGRID_SIZE * j + offset.second);
           necessary.push_back (pair<Point, int> (coord, value));
         }
     }
@@ -260,33 +260,6 @@ print (const Grid &grid)
   }
 }
 
-// For debugging
-void
-print_incomplete (const Grid &grid)
-{
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE; j++)
-    {
-      const Cell &cell = grid[i][j];
-      if (cell.size () == 1)
-        cout << cell[0];
-      else 
-      {
-        cout << "{";
-        copy (
-          cell.begin (), 
-          cell.end (), 
-          ostream_iterator<int> (cout, ",")
-        );
-        cout << "}";
-      }
-      cout << " ";    
-    }
-    cout << endl;
-  }
-}
-
 int
 main (int argc, char **argv)
 {
@@ -303,8 +276,7 @@ main (int argc, char **argv)
         vector< pair<Point, int> > necessary = find_necessary_assignments (grid);
         if (!necessary.size ())
           die ("Stuck!");
-        // adjust grid accordingly
-        cout << "USING COOL STUFF";
+        // Adjust grid accordingly
         for (
           vector< pair<Point, int> >::const_iterator cit = necessary.begin ();
           cit != necessary.end ();
